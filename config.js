@@ -7,10 +7,10 @@ module.exports = {
 	configSubName: 'config-sub',
 	alertSubName: 'alertSub',
 	maxWords: 20,
-	consumer_key: '',
-	consumer_secret: '',
-	access_token_key: '',
-	access_token_secret: '',
+    consumer_key: '',           // <--- FILL ME IN
+    consumer_secret: '',        // <--- FILL ME IN
+    access_token_key: '',       // <--- FILL ME IN
+    access_token_secret: '',
 	instagramKey: '',
 	instagramSecret: '',
 	mongoPath: '',
@@ -26,6 +26,14 @@ module.exports = {
 			'redirectUrl': 'http://localhost:3000/callback'
 
 		}
-	}
+	},
+    twitter:{
+        defaultSearchTerm : "lovegameszambia",
+        consumer_key: '',           // <--- FILL ME IN
+        consumer_secret: '',        // <--- FILL ME IN
+        access_token_key: '',       // <--- FILL ME IN
+        access_token_secret: '',
+        messageTopic: "Twitter.Stream.Tweet"
+    }
 
 };

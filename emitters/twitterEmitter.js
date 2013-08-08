@@ -6,10 +6,10 @@ var twitter = require('ntwitter'),
 var urlRegex = /(https?:\/\/[^\s]+)/g;
 
 var twit = new twitter({
-  consumer_key: config.consumer_key,
-  consumer_secret: config.consumer_secret,
-  access_token_key: config.access_token_key,
-  access_token_secret: config.access_token_secret
+  consumer_key: config.twitter.consumer_key,
+  consumer_secret: config.twitter.consumer_secret,
+  access_token_key: config.twitter.access_token_key,
+  access_token_secret: config.twitter.access_token_secret
 });
 
 var theStream = null;
@@ -18,52 +18,44 @@ var theTrack = null;
 var listener = null;
 
 module.exports.stream = function(service) {
-  settingsRepo.getByKeyWithDefault('twitterSearchTerm', 'Microsoft', function(obj) {
-    theTrack = obj.value;
-    twit.stream('statuses/filter', {
-      track: theTrack
-    }, function(stream) {
-      theStream = stream;
-      console.log("Starting up the Twitter Emitter", theTrack);
-      stream.on('data', function(data) {
-        //console.log(data);
-        var rt = data.retweeted_status;
-        if (rt) {
-          data = data.retweeted_status;
-        }
-        handleData(data, service);
-      });
+    settingsRepo.getByKeyWithDefault('twitterSearchTerm', config.twitter.defaultSearchTerm, function(obj) {
+        theTrack = obj.value;
+        streamTwitter();
     });
-  });
 
-  listener = new sub(config.configTopic, config.configSubName + '-twitter', function(msg) {
-    console.log("[twitter] handling config change");
-    settingsRepo.getByKey('twitterSearchTerm', function(err, obj) {
-      var test = theTrack;
-      if(Array.isArray(test)) {
-        test = test.join(',');
-      }
-      if(test != obj.value) {
-        console.log('we need to restart twitter searching to ', obj.value.split(','))
-        theStream.destroy();
-        theTrack = obj.value.split(',');
+    function streamTwitter() {
         twit.stream('statuses/filter', {
             track: theTrack
-          }, function(stream) {
+        }, function (stream) {
             theStream = stream;
             console.log("Starting up the Twitter Emitter", theTrack);
-            stream.on('data', function(data) {
-              //console.log(data);
-              var rt = data.retweeted_status;
-              if (rt) {
-                data = data.retweeted_status;
-              }
-              handleData(data, service);
+            stream.on('data', function (data) {
+                //console.log(data);
+                var rt = data.retweeted_status;
+                if (rt) {
+                    data = data.retweeted_status;
+                }
+                handleData(data, service);
             });
-          });
-      }
-    });
-  }, true);
+        });
+    }
+
+    listener = new sub(config.configTopic, config.configSubName + '-twitter', function(msg) {
+        console.log("[twitter] handling config change");
+        settingsRepo.getByKey('twitterSearchTerm', function(err, obj) {
+          var test = theTrack;
+          if(Array.isArray(test)) {
+            test = test.join(',');
+          }
+          if(test != obj.value) {
+            console.log('we need to restart twitter searching to ', obj.value.split(','))
+            theStream.destroy();
+            theTrack = obj.value.split(',');
+            streamTwitter();
+          }
+        });
+      },
+    true);
 
 }
 

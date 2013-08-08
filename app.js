@@ -1,6 +1,6 @@
 require('newrelic');
 
-var azure = require('azure'),
+var ServiceFactory = require('./service-manager'),
 	config = require('./config'),
 	insta = require('./emitters/instaEmitter'),
 	twitter = require('./emitters/twitterEmitter'),
@@ -8,10 +8,8 @@ var azure = require('azure'),
     wc = require('./emitters/wcEmitter'),
     as = require('./subscriptions/alert-sub');
 
-process.env.AZURE_SERVICEBUS_NAMESPACE= config.azureNamespace;
-process.env.AZURE_SERVICEBUS_ACCESS_KEY= config.azureAccessKey;
-
-var serviceBusService = azure.createServiceBusService();
+var ServiceManager =  new ServiceFactory();
+var serviceBusService = ServiceManager.createServiceBusService("redis-pub-sub");
 
 serviceBusService.createTopicIfNotExists(config.messageTopic,function(error){
     if(!error){
