@@ -33,7 +33,8 @@ module.exports = {
         consumer_secret: 'd5VuojzGvWvw8AcGmiMR7GzfWBWY5GEabWpE54ibs',        // <--- FILL ME IN
         access_token_key: '128904664-E5qvpRLDvGG7YqyFnmq5mV7ukzYdwKxpgxSC1X28',       // <--- FILL ME IN
         access_token_secret: 'OIR6TG9YTgLYAcEuNJj5upbxVQXAI6UcAmdCqJRyA',
-        messageTopic: "Twitter.Stream.Tweet"
+        messageTopic: "Twitter.Stream.Tweet",
+        defaultTrack: "lovegameszambia"
     }
 
 };

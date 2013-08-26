@@ -51,12 +51,13 @@ module.exports.stream = function(service, track, mongoose) {
             streamTwitter();
         });
     }   else{
-        theTrack = 'lovegameszambia';
+        theTrack = track;
         streamTwitter();
     }
 
     function streamTwitter() {
-        console.log("Streaming data from Twitter");
+        console.log("Tracking twitter streams with the following track:");
+        console.log(theTrack);
         try{
         twit.stream('statuses/filter', {
             track: theTrack
@@ -74,7 +75,7 @@ module.exports.stream = function(service, track, mongoose) {
         }catch(err){
            console.error(err);
             console.log("Retrying to to stream");
-            streamTwitter();
+            //streamTwitter();
         }
     }
 /*

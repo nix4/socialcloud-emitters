@@ -1,6 +1,8 @@
+
+var xyz = [];
 module.exports = function(serviceBus, type, mongoose, appTopicStreams){
     console.log("Setting up emitters");
-    require('newrelic');
+    //require('newrelic');
     var _ = require("underscore");
     var ServiceFactory = require('./service-manager'),
         config = require('./config'),
@@ -12,29 +14,38 @@ module.exports = function(serviceBus, type, mongoose, appTopicStreams){
     var self = this;
     if(appTopicStreams){
          appTopicStreams.forEach(function(topicStream){
-            self.addStreamingParams(topicStream);
+             console.log(topicStream);
+            addStreamingParams(topicStream);
          });
     }
+
     var svctype = (type)? type: "redis-pub-sub";
     var ServiceManager =  new ServiceFactory();
     var serviceBusService = (serviceBus !== undefined)
         ? serviceBus
         : ServiceManager.createServiceBusService(svctype);
-    this.streamingParams = {};
-    this.addStreamingParams = function(streamList){
+
+
+    function addStreamingParams(streamList){
+        console.log(xyz);
         streamList.forEach(function(stream){
-            self.streamingParams[stream.topic] = stream.track;
+            xyz.push(stream);//.topic] = stream.tracks;
         });
     }
 
     this.run = function(){
         if(serviceBusService){
-            var track = _.flatten(_.values(self.streamingParams));
+            var track = [];
+            xyz.forEach(function(stream){
+                track = _.union(track, stream.tracks);//.topic] = stream.tracks;
+            });
+
             console.log("Running emitters for topic: " + config.messageTopic);
+
             serviceBusService.createTopicIfNotExists(config.messageTopic,function(error){
                 if(!error){
                     console.log("Going ahead with Twitter setup");
-                    if(!track)
+                    if(!track || _.size(track) < 1)
                         track = config.twitter.track;
                     twitter.stream(serviceBusService, track, mongoose);
                     /*insta.start(serviceBusService);
