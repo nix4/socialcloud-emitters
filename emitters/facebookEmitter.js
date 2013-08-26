@@ -1,8 +1,13 @@
-var twitter = require('ntwitter'),
+//Because of a lack of a streaming API for facebook, this module will run periodically to gather any new data
+
+var fbgraph = require('fbgraph'),
   config = require('../config'),
+  settingsRepo = require('../model/settings'),
   sub = require('../util/subscriptionListener'),
-  socialMessage;// = require('../model/socialMessage');
+  socialMessage = require('../model/socialMessage');
 var urlRegex = /(https?:\/\/[^\s]+)/g;
+
+graph.setAccessToken(access_token);
 
 var twit = new twitter({
   consumer_key: config.twitter.consumer_key,
@@ -16,54 +21,21 @@ var theTrack = null;
 
 var listener = null;
 
-var search = function(searchOptions){
-    twit.search('nodejs OR #node', function(err, data) {
-        if (err) {
-            console.log('Twitter search failed!');
-        }
-        else {
-            console.log('Search results:');
-            console.dir(data);
-        }
-    });
-}
+module.exports.stream = function(service) {
 
-var updateStatus = function(message){
-    twit
-        .verifyCredentials(function (err, data) {
-            console.log(data);
-        })
-        .updateStatus(message, function (err, data) {
-            console.log(data);
-        }
-    );
-}
-module.exports.stream = function(service, track, mongoose) {
-    console.log("************** Registering Twitter Streamer ***********");
-    var settingsRepo = require('../model/settings')(mongoose);
-    var sm = require('../model/socialMessage')(mongoose) ;
-    socialMessage = sm;
-    if(!track){
-        settingsRepo.getByKeyWithDefault('twitterSearchTerm', config.twitter.defaultSearchTerm, function(obj) {
-            theTrack = "mufc";//obj.value;
-            console.log("Found twitter filters:");
-            console.log(theTrack);
-            streamTwitter();
-        });
-    }   else{
-        theTrack = 'lovegameszambia';
+    settingsRepo.getByKeyWithDefault('twitterSearchTerm', config.twitter.defaultSearchTerm, function(obj) {
+        theTrack = obj.value;
         streamTwitter();
-    }
+    });
 
     function streamTwitter() {
-        console.log("Streaming data from Twitter");
-        try{
         twit.stream('statuses/filter', {
             track: theTrack
         }, function (stream) {
             theStream = stream;
+            console.log("Starting up the Twitter Emitter", theTrack);
             stream.on('data', function (data) {
-                console.log(data);
+                //console.log(data);
                 var rt = data.retweeted_status;
                 if (rt) {
                     data = data.retweeted_status;
@@ -71,13 +43,8 @@ module.exports.stream = function(service, track, mongoose) {
                 handleData(data, service);
             });
         });
-        }catch(err){
-           console.error(err);
-            console.log("Retrying to to stream");
-            streamTwitter();
-        }
     }
-/*
+
     listener = new sub(config.configTopic, config.configSubName + '-twitter', function(msg) {
         console.log("[twitter] handling config change");
         settingsRepo.getByKey('twitterSearchTerm', function(err, obj) {
@@ -93,7 +60,7 @@ module.exports.stream = function(service, track, mongoose) {
           }
         });
       },
-    true);*/
+    true);
 
 }
 
@@ -151,10 +118,8 @@ function handleData(data, service) {
 
 }
 
-function sendMessage(type, service, msg, messageTopic) {
-    if(!messageTopic)
-        messageTopic = config.messageTopic;
-  service.sendTopicMessage(messageTopic, {
+function sendMessage(type, service, msg) {
+  service.sendTopicMessage(config.messageTopic, {
     body: "Message From " + type,
     customProperties: msg
   }, function(error) {

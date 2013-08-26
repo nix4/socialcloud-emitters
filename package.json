@@ -15,6 +15,7 @@
     "twilio": "*",
     "pusher": "*",
     "request": "*",
+      "underscore": "1.4.4",
     "newrelic": "*"
   }
 }
