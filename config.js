@@ -1,23 +1,29 @@
 module.exports = {
 	azureNamespace: "",
 	azureAccessKey: "",
-	messageTopic: "Twitter.Stream.Tweet",
+	messageTopic: "messagetopic",
 	configTopic: "configtopic",
 	wcSubName: 'wc-sub',
 	configSubName: 'config-sub',
 	alertSubName: 'alertSub',
 	maxWords: 20,
-    consumer_key: '',           // <--- FILL ME IN
-    consumer_secret: '',        // <--- FILL ME IN
-    access_token_key: '',       // <--- FILL ME IN
-    access_token_secret: '',
+	consumer_key: '',
+	consumer_secret: '',
+	access_token_key: '',
+	access_token_secret: '',
 	instagramKey: '',
 	instagramSecret: '',
-	mongoPath: 'mongodb://:@localhost:27017/inteldons-dev',
+	mongoPath: '',
 	sendgridUser: '',
 	sendgridKey: '',
 	twillioSid: '',
 	twillioToken: '',
+	twillioFromNumber: '',
+	pusherAppId: '',
+	pusherKey: '',
+	pusherSecret: '',
+	amsPushUrl: '',
+	amsApplicationKey: '',
 	newRelicKey: "",
 	forsquareKeys: {
 		'secrets': {
@@ -28,13 +34,13 @@ module.exports = {
 		}
 	},
     twitter:{
-        defaultSearchTerm : "lovegameszambia",
-        consumer_key: 'pyvzfJZWmV7AF7SfBsBr6w',           // <--- FILL ME IN
-        consumer_secret: 'd5VuojzGvWvw8AcGmiMR7GzfWBWY5GEabWpE54ibs',        // <--- FILL ME IN
-        access_token_key: '128904664-E5qvpRLDvGG7YqyFnmq5mV7ukzYdwKxpgxSC1X28',       // <--- FILL ME IN
-        access_token_secret: 'OIR6TG9YTgLYAcEuNJj5upbxVQXAI6UcAmdCqJRyA',
+        defaultSearchTerm : "",
+        consumer_key: '',           // <--- FILL ME IN
+        consumer_secret: '',        // <--- FILL ME IN
+        access_token_key: '',       // <--- FILL ME IN
+        access_token_secret: '',
         messageTopic: "Twitter.Stream.Tweet",
-        defaultTrack: "lovegameszambia"
+        defaultTrack: ""
     }
 
 };
